@@ -10,6 +10,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Copy files to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ec2-3-229-215-241.compute-1.amazonaws.com
+          username: mods
+          key: ${{ secrets.DEPLOYER_SSH_KEY }}
+          port: 22
+          source: "."
+          target: "/opt/zulip/ai-bot"
+          strip_components: 0
+
       - name: Deploy via SSH to EC2
         uses: appleboy/ssh-action@v0.1.7
         with:
@@ -20,8 +31,6 @@ jobs:
           script: |
             set -e
             cd /opt/zulip/ai-bot
-            git fetch --all
-            git reset --hard origin/main
             # если у вас virtualenv:
             # source venv/bin/activate
             # pip install -r requirements.txt
