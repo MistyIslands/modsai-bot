@@ -16,6 +16,7 @@ jobs:
           host: ec2-3-229-215-241.compute-1.amazonaws.com
           username: deployer
           key: ${{ secrets.DEPLOYER_SSH_KEY }}
+          passphrase: ${{ secrets.DEPLOYER_SSH_PASSPHRASE }}
           port: 22
           script: |
             set -e
