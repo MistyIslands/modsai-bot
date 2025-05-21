@@ -4,7 +4,7 @@ on: [push]
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: uяbuntu-latest
 
     steps:
       - name: Checkout code
@@ -15,6 +15,11 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.DEPLOYER_SSH_KEY }}" > ~/.ssh/deployer_id_ed25519
           chmod 600 ~/.ssh/deployer_id_ed25519
+
+      - name: Debug SSH key file
+        run: |
+          ls -la ~/.ssh
+          cat ~/.ssh/deployer_id_ed25519
 
       - name: Deploy via SSH to EC2
         uses: appleboy/ssh-action@v0.1.7
