@@ -67,10 +67,13 @@ def handle_message(message):
             
         logger.info(f"Получено сообщение от пользователя {user_id}: {user_msg}")
         
-        # Запрос к OpenAI
+        # Запрос к OpenAI с system prompt
         response = openai_client.chat.completions.create(
             model="gpt-3.5-turbo",
-            messages=[{"role": "user", "content": user_msg}]
+            messages=[
+                {"role": "system", "content": "Ты авто механик с 20 годами опыта. Всегда отвечай как эксперт по ремонту автомобилей. Ты можешь понять проблему с машиной на основе простого описания проблемы."},
+                {"role": "user", "content": user_msg}
+            ]
         )
         bot_reply = response.choices[0].message.content
         logger.info(f"Ответ от OpenAI: {bot_reply}")
@@ -86,12 +89,20 @@ def handle_message(message):
         bot_reply = f"Произошла непредвиденная ошибка: {str(e)}"
     
     try:
-        client.send_message({
-            "type": "stream",
-            "to": message["display_recipient"],
-            "subject": message["subject"],
-            "content": bot_reply
-        })
+        if message["type"] == "private":
+            send_payload = {
+                "type": "private",
+                "to": [message["sender_email"]],
+                "content": bot_reply
+            }
+        else:
+            send_payload = {
+                "type": "stream",
+                "to": message["display_recipient"],
+                "subject": message["subject"],
+                "content": bot_reply
+            }
+        client.send_message(send_payload)
         logger.info("Сообщение успешно отправлено")
     except Exception as e:
         logger.error(f"Ошибка при отправке сообщения: {str(e)}")
