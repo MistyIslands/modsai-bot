@@ -10,23 +10,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Setup SSH key
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.DEPLOYER_SSH_KEY }}" > ~/.ssh/deployer_id_ed25519
-          chmod 600 ~/.ssh/deployer_id_ed25519
-
-      - name: Debug SSH key file
-        run: |
-          ls -la ~/.ssh
-          cat ~/.ssh/deployer_id_ed25519
-
       - name: Deploy via SSH to EC2
         uses: appleboy/ssh-action@v0.1.7
         with:
           host: ec2-3-229-215-241.compute-1.amazonaws.com
           username: deployer
-          key_path: ~/.ssh/deployer_id_ed25519
+          key: ${{ secrets.DEPLOYER_SSH_KEY }}
           port: 22
           script: |
             set -e
