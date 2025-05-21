@@ -34,4 +34,4 @@ jobs:
             # если у вас virtualenv:
             # source venv/bin/activate
             # pip install -r requirements.txt
-            sudo systemctl restart modsai-bot.service
+            sudo systemctl restart bot-ai.service
