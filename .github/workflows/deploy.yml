@@ -14,9 +14,8 @@ jobs:
         uses: appleboy/ssh-action@v0.1.7
         with:
           host: ec2-3-229-215-241.compute-1.amazonaws.com
-          username: deployer
+          username: mods
           key: ${{ secrets.DEPLOYER_SSH_KEY }}
-          passphrase: ${{ secrets.DEPLOYER_SSH_PASSPHRASE }}
           port: 22
           script: |
             set -e
