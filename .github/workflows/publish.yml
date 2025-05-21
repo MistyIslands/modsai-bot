@@ -1,3 +1,38 @@
-with:
-  username: deployer
-  key: ${{ secrets.DEPLOYER_SSH_KEY }}
+# .github/workflows/deploy.yml
+name: 🚀 Deploy ModsAI Bot to EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOYER_SSH_KEY }}" > ~/.ssh/deployer_id_ed25519
+          chmod 600 ~/.ssh/deployer_id_ed25519
+
+      - name: Deploy via SSH to EC2
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ec2-3-229-215-241.compute-1.amazonaws.com
+          username: deployer
+          key_path: ~/.ssh/deployer_id_ed25519
+          port: 22
+          script: |
+            set -e
+            cd /opt/zulip/ai-bot
+            git fetch --all
+            git reset --hard origin/main
+            # если у вас virtualenv:
+            # source venv/bin/activate
+            # pip install -r requirements.txt
+            sudo systemctl restart modsai-bot.service
