@@ -1,0 +1,3 @@
+with:
+  username: deployer
+  key: ${{ secrets.DEPLOYER_SSH_KEY }}
